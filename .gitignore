@@ -1,0 +1,21 @@
+node_modules/
+
+# workspace package build output
+**/dist/
+**/*.tsbuildinfo
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Local remote bundle outputs (large); keep README + placeholder
+remote-root/**
+!remote-root/README.md
+!remote-root/.gitkeep
