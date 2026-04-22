@@ -1,0 +1,14 @@
+{
+  "name": "ccc-framework-monorepo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm -ws --if-present run build",
+    "watch": "npm -ws --if-present run watch",
+    "remote:serve": "node scripts/serve-remote-root.mjs",
+    "test:remote-root": "node --test tests/serve-remote-root.test.mjs"
+  }
+}
