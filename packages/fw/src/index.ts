@@ -32,5 +32,19 @@ export type { Context } from './base/context';
 export { registerTimeService, timeServiceToken } from './base/time';
 
 export { pickBundleBaseUrl, validateManifest } from './res/res-bundle-manifest';
+export type { BundleManifest, BundleEntry, BundleEnvOverride } from './res/res-bundle-manifest';
+
+export { ResBundleSessionImpl } from './res/res-bundle-session';
+export { ResRemoteSessionImpl } from './res/res-remote-session';
+export type { ResBundle } from './res/res-types';
+
+export { App } from './base/app/app';
+export { Lifecycle } from './base/lifecycle';
+export type { LifecyclePhase } from './base/lifecycle';
+export { createContext } from './base/context';
+export { createScheduler, sleep } from './base/time';
+export type { Cancel, Scheduler } from './base/time';
+
+export { FW_VERSION } from './version';
 
 export * from './subgame';

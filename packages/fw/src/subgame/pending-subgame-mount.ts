@@ -1,19 +1,31 @@
 import type { SubgameMountPayload } from './types';
 
-let pending: SubgameMountPayload | undefined;
+const PENDING_KEY = Symbol.for('ccc.fw.subgame.pendingMount');
+
+function readPending(): SubgameMountPayload | undefined {
+    return (globalThis as unknown as Record<symbol, unknown>)[PENDING_KEY] as SubgameMountPayload | undefined;
+}
+
+function writePending(value: SubgameMountPayload | undefined): void {
+    if (value === undefined) {
+        delete (globalThis as unknown as Record<symbol, unknown>)[PENDING_KEY];
+        return;
+    }
+    (globalThis as unknown as Record<symbol, unknown>)[PENDING_KEY] = value as unknown as SubgameMountPayload;
+}
 
 export function setPendingSubgameMount(payload: SubgameMountPayload): void {
-    if (pending) {
+    if (readPending()) {
         throw new Error('Pending subgame mount already set (single-flight)');
     }
-    pending = payload;
+    writePending(payload);
 }
 
 export function consumePendingSubgameMount(): SubgameMountPayload {
+    const pending = readPending();
     if (!pending) {
         throw new Error('No pending subgame mount payload');
     }
-    const p = pending;
-    pending = undefined;
-    return p;
+    writePending(undefined);
+    return pending;
 }
