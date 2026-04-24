@@ -67,7 +67,21 @@ function parseRange(rangeHeader, size) {
   return { start, end };
 }
 
-async function sendFile(req, res, filePath, method) {
+function cacheControlForUrlPath(urlPath) {
+  const p = urlPath.toLowerCase();
+  // 不缓存：manifest/config/import 索引类
+  if (p.endsWith('/manifest.json') || p.endsWith('/config.json')) return 'no-cache';
+  if (p.includes('/import/')) return 'no-cache';
+  if (p.endsWith('/publish-meta.json')) return 'no-cache';
+
+  // 强缓存：index.<hash>.js
+  if (/\/index\.[a-z0-9_-]+\.js$/.test(p)) return 'public, max-age=31536000, immutable';
+
+  // 默认：短缓存
+  return 'public, max-age=60';
+}
+
+async function sendFile(req, res, filePath, method, urlPathname) {
   const stat = await fsp.stat(filePath);
   if (!stat.isFile()) {
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -77,12 +91,14 @@ async function sendFile(req, res, filePath, method) {
 
   const size = stat.size;
   const type = contentType(filePath);
+  const cacheControl = cacheControlForUrlPath(urlPathname);
 
   const cors = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, HEAD, OPTIONS',
     'Access-Control-Allow-Headers': '*',
     'Cross-Origin-Resource-Policy': 'cross-origin',
+    'Cache-Control': cacheControl,
   };
 
   if (method === 'OPTIONS') {
@@ -148,7 +164,7 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    await sendFile(req, res, safePath, req.method ?? 'GET');
+    await sendFile(req, res, safePath, req.method ?? 'GET', pathname);
   } catch (e) {
     if ((e && e.code) === 'ENOENT') {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
