@@ -3,5 +3,8 @@
   "uuid": "19ac962a-5b59-405b-aaf4-3ac0622b6193",
   "creator": {
     "version": "3.8.8"
+  },
+  "scripts": {
+    "remote:publish": "node ../../scripts/publish-single-bundle.mjs --in build/build-bundle/web-desktop/game-template --bundle game-template"
   }
 }
