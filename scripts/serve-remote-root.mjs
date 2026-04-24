@@ -69,13 +69,8 @@ function parseRange(rangeHeader, size) {
 
 function cacheControlForUrlPath(urlPath) {
   const p = urlPath.toLowerCase();
-  // 不缓存：manifest/config/import 索引类
-  if (p.endsWith('/manifest.json') || p.endsWith('/config.json')) return 'no-cache';
-  if (p.includes('/import/')) return 'no-cache';
-  if (p.endsWith('/publish-meta.json')) return 'no-cache';
-
-  // 强缓存：index.<hash>.js
-  if (/\/index\.[a-z0-9_-]+\.js$/.test(p)) return 'public, max-age=31536000, immutable';
+  // 不缓存：仅 manifest.json（方便热更新/调试时立刻生效）
+  if (p.endsWith('/manifest.json')) return 'no-cache';
 
   // 默认：短缓存
   return 'public, max-age=60';
