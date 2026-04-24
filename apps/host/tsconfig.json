@@ -1,0 +1,13 @@
+{
+  /* Base configuration. Do not edit this field. */
+  "extends": "./temp/tsconfig.cocos.json",
+
+  /* Add your custom configuration here. */
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "strict": false,
+    "baseUrl": ".",
+    "paths": {
+    }
+  }
+}
