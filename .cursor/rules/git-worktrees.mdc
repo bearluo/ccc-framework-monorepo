@@ -1,0 +1,52 @@
+---
+description: Git worktree 工作流约定（创建/进入/清理/避免踩坑）
+alwaysApply: true
+---
+
+# Git worktree 使用规则
+
+- **目的**：用 worktree 做“隔离实现/实验/并行开发”，避免污染当前工作区；需要保持可随时清理与可复现。
+
+## 目录与命名
+
+- **统一放置**：新 worktree 一律创建在仓库根的 `.worktrees/<topic-or-branch>/` 下（不要散落到磁盘任意位置，便于清理与检索）。
+- **分支名即目录名**：目录名尽量与分支名一致（或仅做安全字符替换），避免“目录与分支对不上”的维护成本。
+
+## 标准命令（推荐）
+
+- **从当前仓库创建一个新 worktree（新分支）**：
+
+```bash
+git worktree add -b <branch> .worktrees/<branch> <base>
+```
+
+- **从远端/已有分支创建 worktree**：
+
+```bash
+git worktree add .worktrees/<branch> <branch>
+```
+
+- **列出 worktree**：
+
+```bash
+git worktree list
+```
+
+## 清理与回收
+
+- **删除 worktree**（优先用 `remove`，再用 `prune`）：
+
+```bash
+git worktree remove .worktrees/<branch>
+git worktree prune
+```
+
+- **禁止“删目录当清理”**：不要直接在文件管理器里删 `.worktrees/<...>`，否则容易留下锁/记录，后续需要 `prune` 才能恢复。
+
+## 常见坑位（必须遵守）
+
+- **不要提交 `.worktrees/`**：worktree 目录属于本地工作区产物，应保持在 `.gitignore` 中（若发现被追踪，必须立即移除追踪并补 ignore）。
+- **Cocos Creator 的 `*.meta` 须提交**：`assets/` 下资源、脚本、文件夹对应的 `.meta` 由编辑器维护 uuid 与引用关系；**新增、重命名或移动**时须与对应文件**一并纳入版本控制并提交**，勿当作「生成噪声」忽略，否则易出现 uuid 漂移、引用丢失或协作方反复出现未追踪 meta。
+- **提交 message 必须使用中文**：提交信息用中文清晰表达“为什么改/改了什么”，避免英文或中英混杂导致风格不一致。
+- **不要在 worktree 里做全局配置修改**：例如 `git config --global`、编辑用户级工具配置等；worktree 的价值是隔离代码与依赖，而不是污染环境。
+- **避免交叉操作**：在 A worktree 里执行会影响 B worktree 的脚本（如清理、生成、格式化）前，先确认当前目录与目标路径一致。

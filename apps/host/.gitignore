@@ -4,7 +4,6 @@
 #///////////////////////////
 library/
 temp/*
-!temp/tsconfig.cocos.json
 local/
 build/
 profiles/

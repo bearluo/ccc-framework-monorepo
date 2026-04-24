@@ -1,0 +1,81 @@
+---
+description: TypeScript 命名规范（对齐通用风格指南，非「迁就现状」）
+globs:
+  - "**/*.ts"
+alwaysApply: false
+---
+
+# 命名约定（规范性）
+
+以下对齐常见 TypeScript / JS 工程实践（如 [Google TypeScript Style Guide](https://google.github.io/styleguide/tsguide.html) 中的标识符与文件约定、官方 Handbook 的接口命名倾向），**全仓应统一**；与历史代码不一致时，新代码遵守本规则，旧代码在改动触及处再渐进对齐。
+
+## 文件与目录
+
+- **目录名**：全小写；多词用 **`kebab-case`**（如 `user-settings`），**不用** camelCase 目录名。
+- **TypeScript 源文件名**（二选一，**同一仓库内保持一种**）：
+  - **推荐 A（通用、跨平台友好）**：多词文件 **`kebab-case`**，如 `user-service.ts`、`http-client.ts`。
+  - **推荐 B（单类主导出）**：文件内**仅一个**主导出类/枚举时，文件名可与该符号 **`PascalCase` 一致**，如 `UserService.ts`（与导出 `class UserService` 同名）。
+- **禁止**：多词文件名使用 **`camelCase`**（如 `userService.ts`），易与标识符混淆且在大小写不敏感文件系统上引发问题。
+
+## 标识符（TypeScript）
+
+- **类、接口、类型别名、枚举名、命名空间**：**`PascalCase`**。
+- **接口名**：**不要**使用匈牙利式 **`I` 前缀**（如 ~~`IUser`~~）；用名词短语，如 `User`、`LoadOptions`。
+- **函数、方法、属性、局部变量、参数**：**`camelCase`**。
+- **实现类命名**：优先 **`具体语义 + 角色`**（如 `DefaultEventBus`、`InMemoryStorageDriver`），便于区分多实现；**避免**泛用无信息的 `*Impl`，除非契约接口在单实现场景下为控制歧义刻意保留。
+- **布尔变量 / 返回布尔的方法**：使用 **`is` / `has` / `should` / `can` / `needs`** 等前缀，如 `isLoaded`、`hasError`。
+- **类型参数（泛型）**：单字母 `T`、`K`、`V` 或**有意义的 `PascalCase` 短名**，如 `TItem`、`TKey`。
+- **私有成员**：使用语言关键字 **`private`** 或 **`#` 私有字段**；**避免**在新代码中用单下划线 `_foo` 表示「约定私有」。
+
+## 常量
+
+- **模块级、配置级、真常量**（引用不变、语义为常量）：推荐 **`UPPER_SNAKE_CASE`**，如 `MAX_RETRY`、`DEFAULT_TIMEOUT_MS`。
+- **与运行时实例绑定的 `const` 对象**（单例、表、注册表）：仍用 **`camelCase`**，如 `resServiceToken`、`routeTable`。
+
+## 工厂与构造函数
+
+- **工厂函数**：**`create` + `PascalCase` 名词**，如 `createContext`、`createUserRepository`。
+- **构造函数 / 类**：**`new` 不适用函数名**；类名 **`PascalCase`**。
+
+## DI（InjectionToken / 符号）
+
+- **导出符号名**：**`camelCase` + `Token` 后缀**，如 `userServiceToken`、`eventBusToken`。
+- **`createToken` 描述字符串**：使用**可读的限定名**，建议 **`领域:用途`** 或 **`包/层.概念`**，便于在调试器与日志中区分，例如 `ccc-framework:ResService`、`app.audio:Bus`。
+
+## Cocos 组件
+
+- **`@ccclass('Name')`**：与**导出类名完全一致**（`PascalCase`）。
+- **组件脚本文件名**：与 **`@ccclass` 一致**的 **`PascalCase.ts`**，或与仓库选定的「源文件 kebab-case」策略统一（**二选一全仓一致**）。
+
+## 缩写与通用词
+
+- **允许的小写缩写**（在 `camelCase` 中按段首大写规则处理）：`id`、`url`、`http`、`api`、`dto`、`ui`。
+- **其余**优先写全词；不确定时查项目词典或沿用 DOM / Web 标准中的拼写。
+
+## 文档与设计稿文件名
+
+- **spec / plan**：`YYYY-MM-DD-<topic>.md`；细则见 `.cursor/rules/ccc-framework-core.mdc`，此处不重复。
+
+## 反例与正例（与具体业务无关）
+
+```ts
+// ❌ 接口加 I 前缀；实现类只有 Impl 无语义
+// interface IUserService { }
+// class UserServiceImpl implements IUserService { }
+
+// ❌ 布尔无动词前缀
+// const loaded = true;
+
+// ❌ Token 描述过短、易冲突
+// createToken<UserService>('service')
+```
+
+```ts
+// ✅ 接口与语义化实现
+// interface UserService { }
+// class HttpUserService implements UserService { }
+
+// ✅ 布尔与 Token
+// const isLoaded = true;
+// export const userServiceToken = createToken<UserService>('ccc-framework:UserService');
+```

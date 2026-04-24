@@ -1,0 +1,28 @@
+---
+description: framework 核心约定（结构 / 分层 / 公共入口 / TS）
+globs:
+  - assets/framework/**/*.ts
+  - docs/**/*.md
+  - docs/**/*.mdc
+alwaysApply: false
+---
+
+# framework 核心约定
+
+- **交付根目录**：框架脚本仅以 `assets/framework/` 为交付根；不要把可复用框架代码放到别的目录分散维护。
+- **分层与边界**：目录按 `base/utils/storage/net/res/ui/gameplay` 分层；除 `gameplay` 外的其它层不得反向依赖 `gameplay`。
+- **公共 API 入口**：每层对外导出统一通过该层的 `index.ts`（barrel）；尽量避免跨层“深路径”直接 import 内部文件作为公共用法。
+
+- **TypeScript 风格**：
+  - 对外聚合入口建议使用 `export * as xxx from '@fw/...'`（参见 `assets/framework/base/index.ts`）。
+  - 保持“可被独立编译”的纯 TS：不要在 `base/utils` 引入强依赖运行时环境的实现（除非该层明确约定）。
+
+# 文档维护约定
+
+- **文档即契约**：当你调整“公共 API / 分层边界 / 目录结构 / 命名约定”时，必须同步更新 `docs/architecture/ccc-framework.md`（让代码与架构文档一致）。
+- **分层边界变更必须记录**：任何跨层依赖规则的新增/放宽/例外，都要在文档中写清楚“原因、影响范围、替代方案、退出条件（何时移除例外）”，避免默默破窗。
+- **入口与别名变化要同步**：新增/调整 `assets/framework/**/index.ts` 的对外导出，或 `@fw/*` 的路径策略变化时，要同步更新对应文档中的示例代码，避免示例失真。
+- **命名与时间戳**：
+  - `docs/superpowers/specs/`、`docs/superpowers/plans/` 下的文档文件名统一使用 `YYYY-MM-DD-<topic>.md`（时间戳反映“首次创建日期”，后续修改不改名）。
+  - 如果需要迭代版本，在文档内用 “## 变更记录” 追加条目（日期 + 变更摘要），不要靠改文件名制造历史。
+- **链接稳定性**：移动/重命名文档或目录后，必须同步修复仓库内所有引用（相对链接优先）；避免重复创建内容相近的新文档，优先在原文补充并通过小节拆分。
