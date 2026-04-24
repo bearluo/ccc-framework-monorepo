@@ -33,3 +33,15 @@
 若使用推荐分层，则 `baseUrl` 指向：
 
 `http://127.0.0.1:8787/game-template/web-desktop/dev`
+
+## bundles 发布结构（单 bundle）
+
+发布到：
+
+`remote-root/bundles/<bundleName>/`
+
+并生成：
+
+`remote-root/bundles/<bundleName>/manifest.json`
+
+其中 `baseUrl` 使用相对路径 `bundles/<bundleName>`，`version` 从 `index.<buildId>.js` 解析（如 `cc094`）。
