@@ -31,7 +31,7 @@ export type { Context } from './base/context';
 
 export { registerTimeService, timeServiceToken } from './base/time';
 
-export { pickBundleBaseUrl, validateManifest } from './res/res-bundle-manifest';
+export { pickBundleBaseUrl, pickBundleVersion, validateManifest } from './res/res-bundle-manifest';
 export type { BundleManifest, BundleEntry, BundleEnvOverride } from './res/res-bundle-manifest';
 
 export { ResBundleSessionImpl } from './res/res-bundle-session';

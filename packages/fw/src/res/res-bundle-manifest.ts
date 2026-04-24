@@ -84,3 +84,20 @@ export function pickBundleBaseUrl(manifest: BundleManifest, bundleName: string, 
     return entry.baseUrl;
 }
 
+export function pickBundleVersion(manifest: BundleManifest, bundleName: string, env: ResEnv): string {
+    const entry = manifest.bundles[bundleName];
+    if (!entry) throw new Error(`manifest.bundles["${bundleName}"] 不存在`);
+
+    const overrideVersion = entry.env?.[env]?.version;
+    if (overrideVersion !== undefined) {
+        if (typeof overrideVersion !== 'string' || overrideVersion.trim().length === 0) {
+            throw new Error(`manifest.bundles["${bundleName}"].env["${env}"].version 必须是非空字符串`);
+        }
+        return overrideVersion;
+    }
+
+    if (typeof entry.version !== 'string' || entry.version.trim().length === 0) {
+        throw new Error(`manifest.bundles["${bundleName}"].version 必须是非空字符串`);
+    }
+    return entry.version;
+}

@@ -8,6 +8,7 @@
     "strict": false,
     "baseUrl": ".",
     "paths": {
+      "@ccc/fw": ["../../packages/fw/src/index.ts"]
     }
   }
 }

@@ -1,7 +1,7 @@
 import { createToken } from '../base/di';
 import { assetManager } from 'cc';
 import type { AssetManager } from 'cc';
-import type { ResBundle, ResBundleSession, ResRemoteSession, ResService } from './res-types';
+import type { ResBundle, ResBundleLoadOptions, ResBundleSession, ResRemoteSession, ResService } from './res-types';
 import { ResBundleSessionImpl } from './res-bundle-session';
 import { ResRemoteSessionImpl } from './res-remote-session';
 import { Service } from '../base/decorators';
@@ -9,7 +9,7 @@ import { Service } from '../base/decorators';
 /** DI 注册用；与 `createResService` 搭配 `Container.registerSingleton`。 */
 export const resServiceToken = createToken<ResService>('ccc.fw.ResService');
 
-function promisifyLoadBundle(am: AssetManager, nameOrUrl: string, options?: unknown): Promise<ResBundle> {
+function promisifyLoadBundle(am: AssetManager, nameOrUrl: string, options?: ResBundleLoadOptions): Promise<ResBundle> {
     return new Promise((resolve, reject) => {
         const onComplete = (err: Error | null, bundle: ResBundle | null) => {
             if (err) reject(err);
@@ -31,11 +31,10 @@ export class ResServiceImpl implements ResService {
     constructor(public readonly assetManager: AssetManager) {}
 
     getBundle(name: string): ResBundle | null {
-        this.assetManager.downloader
         return this.assetManager.getBundle(name);
     }
 
-    async loadBundle(nameOrUrl: string, options?: unknown): Promise<ResBundleSession> {
+    async loadBundle(nameOrUrl: string, options?: ResBundleLoadOptions): Promise<ResBundleSession> {
         const bundle = await promisifyLoadBundle(this.assetManager, nameOrUrl, options);
         return new ResBundleSessionImpl(bundle);
     }

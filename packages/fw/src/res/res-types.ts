@@ -63,6 +63,17 @@ export type ResBundlePreloadArgs =
     | [paths: string | string[], onProgress: ResBundleLoadProgress | null]
     | [paths: string | string[], type: Constructor<Asset> | null, onProgress: ResBundleLoadProgress | null];
 
+/**
+ * `assetManager.loadBundle` 的 options 形状（去掉回调参数）。
+ * Creator 3.8 声明里允许 `version?: string` 且可扩展任意字段；并允许传 `null`。
+ */
+export type ResBundleLoadOptions =
+    | {
+          [k: string]: unknown;
+          version?: string;
+      }
+    | null;
+
 export interface ResBundleSession {
     readonly bundle: ResBundle;
     load<T extends Asset>(...args: ResBundleLoadArgs<T>): Promise<T>;
@@ -79,6 +90,6 @@ export interface ResRemoteSession {
 export interface ResService {
     readonly assetManager: AssetManager;
     getBundle(name: string): ResBundle | null;
-    loadBundle(nameOrUrl: string, options?: unknown): Promise<ResBundleSession>;
+    loadBundle(nameOrUrl: string, options?: ResBundleLoadOptions): Promise<ResBundleSession>;
     openRemoteSession(): ResRemoteSession;
 }
