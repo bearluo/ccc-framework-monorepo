@@ -10,6 +10,7 @@
     "watch": "npm -ws --if-present run watch",
     "remote:serve": "node scripts/serve-remote-root.mjs",
     "test:remote-root": "node --test tests/serve-remote-root.test.mjs",
+    "test:remote:publish": "node --test tests/publish-single-bundle.test.mjs",
     "test:subgame-context": "npm run build --workspace=@ccc/fw && node --import ./tests/register-node-cc.mjs --test tests/subgame-isolated-context.test.mjs tests/pending-subgame-mount.test.mjs"
   }
 }
